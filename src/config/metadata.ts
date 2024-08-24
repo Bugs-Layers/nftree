@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 
 export function constructMetadata({
-  title = "Sophist AI - Your learning companion",
-  description = "Ergonomic learning experience at the tip of your fingers.",
+  title = "NFTree",
+  description = "Turn your trees into Real World Assets",
   image = "/thumbnail.png",
   icons = "/favicon.ico",
   noIndex = false,
@@ -33,7 +33,7 @@ export function constructMetadata({
       creator: "@shahankk42",
     },
     icons,
-    metadataBase: new URL("https://sophist-ai.vercel.app/"),
+    metadataBase: new URL("https://nftree-one.netlify.app/"),
     ...(noIndex && {
       robots: {
         index: false,
