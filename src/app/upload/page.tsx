@@ -31,6 +31,8 @@ const formSchema = z.object({
 import Camera from "~/components/ui/camera/camera";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "~/components/ui/dialog";
 import { UploadIcon, CameraIcon } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { getUserById } from "~/client/api";
 
 function Page() {
     const form = useForm<z.infer<typeof formSchema>>({
