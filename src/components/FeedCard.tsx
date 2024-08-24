@@ -8,7 +8,7 @@ import { ArrowUpIcon } from "lucide-react"
 
 
 
-export function FeedPage() {
+export function FeedCard() {
     return (
 
 <Card className="border-0 rounded-none shadow-none">
