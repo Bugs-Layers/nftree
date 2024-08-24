@@ -42,6 +42,7 @@ const Camera: FC<CameraProps> = ({ onClosed, onCapturedImages }) => {
                 addImage(imageData);
             }
         }
+        // handleOnCapturedImages(images);
     };
 
     const handleOnClosed = () => {
@@ -54,7 +55,7 @@ const Camera: FC<CameraProps> = ({ onClosed, onCapturedImages }) => {
         handleOnClosed();
     };
     return (
-        <div className="z-10 flex min-w-[calc(100vw_-_theme(spacing.4))] flex-1 flex-col ">
+        <div className="z-50 flex min-w-[calc(100vw_-_theme(spacing.4))] flex-1 flex-col ">
             <div className="relative w-full ">
                 <div className="absolute z-10 w-full md:h-[calc(93vh_-_theme(spacing.12))] md:w-[20%] ">
                     <div className="relative left-2 top-0">
