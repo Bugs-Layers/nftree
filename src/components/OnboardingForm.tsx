@@ -85,7 +85,7 @@ function OnboardingForm({ walletAddress }: { walletAddress: string }) {
           </div>
 
           <Button type="submit">Submit</Button>
-          
+
         </form>
       </Form>
     </>
