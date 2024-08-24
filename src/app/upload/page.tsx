@@ -44,6 +44,11 @@ function Page() {
     const [latitude, setLatitude] = useState<string>("");
     const [longitude, setLongitude] = useState<string>("");
 
+    const [showDialog, setShowDialog] = useState(false);
+    const [capturedImage, setCapturedImage] = useState<string>();
+
+    const [isCapturedImageInForm, setIsCapturedImageInForm] = useState<boolean>(false);
+
     console.log(`lat:${latitude}, long: ${longitude}`);
 
 
@@ -73,9 +78,9 @@ function Page() {
     };
 
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
-        if (selectedFile) {
+        if (capturedImage) {
             const formData = new FormData();
-            formData.append("picUrl", selectedFile);
+            formData.append("picUrl", capturedImage);
             formData.append("description", data.description);
             formData.append("location", `${latitude}, ${longitude}`); // Using the captured location
 
@@ -84,33 +89,44 @@ function Page() {
             // const createdRecordPosts = await pb.collection("posts").create(formData);
 
             const newFormData = new FormData();
-            newFormData.append("picUrl", selectedFile);
+            newFormData.append("pic", capturedImage);
             // newFormData.append("tree_id", createdRecordTrees.id);
             // newFormData.append("user_id", user.id);
             newFormData.append("upvotes", "0");
-
+            setIsCapturedImageInForm(true);
 
             // TODO: redirect to individual tree page
         }
     };
 
-    const [showDialog, setShowDialog] = useState(false);
-    const [capturedImages, setCapturedImages] = useState<string[]>([]);
+    const handleCapureImage = (images: string[]) => {
+        const newImage = images[images.length - 1];
+        if (newImage) {
+            setShowDialog(false);
+            setCapturedImage(newImage);
+        }
+        console.log(capturedImage);
+    }
 
     return (
         <div className="w-full flex justify-center items-center">
             <div className="flex flex-col items-center w-full gap-2 px-4 pt-10">
                 {/* Image preview */}
-                <div className="relative size-64">
-                    <Image
-                        src={url}
-                        alt="Preview of the captured image"
-                        fill
-                        objectFit="cover"
-                        className="rounded-lg"
-                    />
-                </div>
+                {capturedImage &&
+                    <div className="relative size-64">
+                        <Image
+                            src={capturedImage}
+                            alt="Preview of the captured image"
+                            fill
+                            objectFit="cover"
+                            className="rounded-lg"
+                        />
+                    </div>}
                 {/* Form */}
+                {/* <div>{capturedImage}</div> */}
+                {isCapturedImageInForm && (
+                    <div>image is accessed in form</div>
+                )}
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(onSubmit)}
@@ -141,16 +157,12 @@ function Page() {
                                                         </Button>
                                                     </DialogTrigger>
                                                     <DialogContent className="h-svh w-svw max-w-full p-0">
-                                                        <DialogHeader>
-                                                            <DialogTitle>Capture your tree</DialogTitle>
-                                                        </DialogHeader>
                                                         <Camera
                                                             onClosed={() => {
                                                                 setShowDialog(false);
                                                             }}
                                                             onCapturedImages={(images) => {
-                                                                setCapturedImages(images);
-                                                                setShowDialog(false);
+                                                                handleCapureImage(images);
                                                             }}
                                                         />
                                                     </DialogContent>

@@ -104,6 +104,7 @@ export const CameraProvider = ({ children }: CameraProviderProps) => {
     };
 
     const takePhoto = (): string | undefined => {
+        // stopStream();
         if (
             !playerRef.current ||
             !canvasRef.current ||
