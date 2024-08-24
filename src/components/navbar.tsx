@@ -2,6 +2,7 @@ import { cn } from "~/lib/utils";
 import MaxWidthWrapper from "./max-width-wrapper";
 import { ThemeToggle } from "./theme-toggle";
 
+
 export default function Navbar({
   sticky = false
 }: {
@@ -12,8 +13,8 @@ export default function Navbar({
       "sticky top-0": sticky,
     })}>
       <MaxWidthWrapper>
-        <div className="flex h-14 items-center justify-between">
-          <span className="">NAVBAR</span>
+        <div className="flex h-14 items-center justify-between bg-[#f5f5f5] dark:bg-black">
+          <span className=""></span>
           <ThemeToggle />
         </div>
       </MaxWidthWrapper>
