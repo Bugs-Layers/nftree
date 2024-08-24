@@ -10,13 +10,14 @@ export default function Navbar({
   sticky?: boolean
 }) {
   return (
-    <nav className={cn("h-14 z-[100] w-full transition-all bg-[#f5f5f5]", {
+    <nav className={cn("h-[calc(8vh)] z-[100] w-full transition-all bg-[#f5f5f5] dark:bg-black", {
       "sticky top-0": sticky,
     })}>
       <MaxWidthWrapper>
-        <div className="flex h-14 items-center justify-between bg-[#f5f5f5]">
-          <span className=""><nav className="flex items-center gap-4">
-          <Image src="/logo.png" alt="logo" width={40} height={40} />
+        <div className="flex h-full items-center justify-between bg-[#f5f5f5] dark:bg-black">
+          <span><nav className="flex items-center gap-4 ">
+            <div className="dark:hidden">
+          <Image src="/logo.png" alt="logo" width={40} height={40} /></div>
         </nav></span>
           <ThemeToggle />
         </div>

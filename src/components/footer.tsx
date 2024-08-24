@@ -16,7 +16,7 @@ export default function Footer() {
              <div className="flex gap-[30vw] dark:bg-black">
                  <Link href={"/home"}> <House  className="dark:text-white" /></Link>
                   <Link href={"/upload"}><Plus className="dark:text-white"/></Link>
-                  <Link href={"/profile"}><UserRound className="dark:text-white"/></Link>
+                  <Link href={"/user"}><UserRound className="dark:text-white"/></Link>
              </div>
         </div>
       </MaxWidthWrapper>

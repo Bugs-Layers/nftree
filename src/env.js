@@ -8,7 +8,6 @@ export const env = createEnv({
    */
   server: {
     NODE_ENV: z.enum(["development", "test", "production"]),
-    THIRDWEB_SECRET_KEY: z.string(),
     THIRDWEB_ADMIN_PRIVATE_KEY: z.string()
   },
 
@@ -21,6 +20,7 @@ export const env = createEnv({
     // NEXT_PUBLIC_CLIENTVAR: z.string(),
     NEXT_PUBLIC_THIRDWEB_CLIENT_ID: z.string(),
     NEXT_PUBLIC_PB_URL: z.string(),
+    NEXT_PUBLIC_THIRDWEB_SECRET_KEY: z.string(),
   },
 
   /**
@@ -29,7 +29,7 @@ export const env = createEnv({
    */
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
-    THIRDWEB_SECRET_KEY: process.env.THIRDWEB_SECRET_KEY,
+    NEXT_PUBLIC_THIRDWEB_SECRET_KEY: process.env.NEXT_PUBLIC_THIRDWEB_SECRET_KEY,
     THIRDWEB_ADMIN_PRIVATE_KEY: process.env.THIRDWEB_ADMIN_PRIVATE_KEY,
     NEXT_PUBLIC_THIRDWEB_CLIENT_ID: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID,
     NEXT_PUBLIC_PB_URL: process.env.NEXT_PUBLIC_PB_URL,
