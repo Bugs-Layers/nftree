@@ -77,15 +77,16 @@ function Page() {
         getLocation();
     };
 
-    const { data: imageUrl, mutate: mutateImageUrl, isSuccess: uploadImageIsSuccess } = useMutation({
-        mutationFn: ({ image }: { image: Blob }) => {
-            return uploadImage(image)
-        }
-    })
+    // const { data: imageUrl, mutate: mutateImageUrl, isSuccess: uploadImageIsSuccess } = useMutation({
+    //     mutationFn: ({ image }: { image: Blob }) => {
+    //         return uploadImage(image)
+    //     }
+    // })
 
     const treeMutation = useMutation({
-        mutationFn: ({ name, location, user_id, type, content, imageFilename }: { name: string, location: string, user_id: number, type: string, content: string, imageFilename: string }) => {
-            return createTree(name, location, user_id, type, content, imageFilename)
+        mutationFn: async ({ name, location, user_id, type, content, image }: { name: string, location: string, user_id: number, type: string, content: string, image: Blob }) => {
+            const imageUrlObj = await uploadImage(image)
+            await createTree(name, location, user_id, type, content, imageUrlObj.filename)
         }
     })
 
@@ -93,22 +94,21 @@ function Page() {
         if (capturedImage) {
             const imageBlob = await (await fetch(capturedImage)).blob();
 
-            mutateImageUrl({ image: imageBlob })
+            // mutateImageUrl({ image: imageBlob })
 
-            if (uploadImageIsSuccess)
-                treeMutation.mutate({
-                    name: data.name,
-                    location: `${data.latitude}:${data.longitude}`,
-                    type: data.type,
-                    user_id: 1,
-                    content: data.description,
-                    imageFilename: imageUrl.filename,
-                }, {
-                    onSuccess: () => {
-                        console.log("mutated")
-                        router.push("/home")
-                    }
-                })
+            treeMutation.mutate({
+                name: data.name,
+                location: `${data.latitude}:${data.longitude}`,
+                type: data.type,
+                user_id: 1,
+                content: data.description,
+                image: imageBlob
+            }, {
+                onSuccess: () => {
+                    console.log("mutated")
+                    router.push("/home")
+                }
+            })
 
         }
     };
