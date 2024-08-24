@@ -60,7 +60,20 @@ export const createUser = async (name: string, bio: string, wallet: string) => {
   console.log(await res.json())
 }
 
-export const createTree = async (name: string, location: string, user_id: number, type: string, content: string): Promise<{
+export const uploadImage = async (image: Blob): Promise<{ filename: string }> => {
+  const formData = new FormData();
+  formData.append("file", image);
+
+  const res = await fetch(`${BASE_URL}/images`, {
+    method: "POST",
+    body: formData
+  })
+  if (!res.ok) throw new Error(await res.json())
+
+  return await res.json()
+}
+
+export const createTree = async (name: string, location: string, user_id: number, type: string, content: string, imageFilename: string): Promise<{
   message: string,
   tree_id: number | undefined
 }> => {
@@ -77,7 +90,7 @@ export const createTree = async (name: string, location: string, user_id: number
         type,
       },
       post: {
-        content,
+        content: `img=/images/${imageFilename} ${content}`,
         user_id: 0,
         tree_id: 0
       }
