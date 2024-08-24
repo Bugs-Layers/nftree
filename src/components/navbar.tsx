@@ -3,6 +3,7 @@ import MaxWidthWrapper from "./max-width-wrapper";
 import { ThemeToggle } from "./theme-toggle";
 import Image from 'next/image';
 
+
 export default function Navbar({
   sticky = false
 }: {

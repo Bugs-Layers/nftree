@@ -1,13 +1,8 @@
-import Link from "next/link";
 import { FeedPage } from "~/components/component/FeedPage";
 import MaxWidthWrapper from "~/components/max-width-wrapper";
-import SignOutItem from "~/components/sign-out-item";
-import { buttonVariants } from "~/components/ui/button";
-import { cn } from "~/lib/utils";
+import Profile from "~/components/Profile"
 
-export default async function HomePage() {
-  const user = false;
-
+function page() {
   return (
     <main className="">
       <MaxWidthWrapper>
@@ -17,3 +12,5 @@ export default async function HomePage() {
     </main>
   );
 }
+
+export default page
