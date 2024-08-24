@@ -10,6 +10,13 @@ import {
     FormLabel,
     FormMessage,
 } from "~/components/ui/form";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "~/components/ui/select"
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -36,7 +43,7 @@ import { createTree, getUserById, uploadImage } from "~/client/api";
 import { useRouter } from "next/navigation";
 import { log } from "console";
 
-function Page() {
+const Page = () => {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
     });
@@ -103,13 +110,13 @@ function Page() {
             treeMutation.mutate({
                 name: data.name,
                 location: `${data.latitude}:${data.longitude}`,
-                type: data.type,
+                type: 'treeType',
                 user_id: 1,
                 content: data.description,
                 image: imageBlob
             }, {
                 onSuccess: () => {
-                    console.log("mutated")
+                    console.log("Updated")
                     router.push("/home")
                 }
             })
@@ -197,24 +204,27 @@ function Page() {
                                 name="name"
                                 render={({ field }) => (
                                     <FormItem>
-                                        {/* <FormLabel>Name</FormLabel> */}
-                                        <FormControl>
-                                            <Input {...field} placeholder="Add Name of Tree" />
-                                        </FormControl>
-                                        {/* <FormDescription>
-                                            Name your tree (important!)
-                                        </FormDescription> */}
-                                        <FormMessage />
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select your tree" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="m@example.com">m@example.com</SelectItem>
+                                                <SelectItem value="m@google.com">m@google.com</SelectItem>
+                                                <SelectItem value="m@support.com">m@support.com</SelectItem>
+                                            </SelectContent>
+                                        </Select>
                                     </FormItem>
                                 )}
                             />
 
-                            <FormField
+                            {/* <FormField
                                 control={form.control}
                                 name="type"
                                 render={({ field }) => (
-                                    <FormItem>
-                                        {/* <FormLabel>Type</FormLabel> */}
+                                    <FormItem className="hidden">
                                         <FormControl>
                                             <Input {...field} placeholder="Enter Type" />
                                         </FormControl>
@@ -224,7 +234,7 @@ function Page() {
                                         <FormMessage />
                                     </FormItem>
                                 )}
-                            />
+                            /> */}
 
                             <FormField
                                 control={form.control}
@@ -240,7 +250,7 @@ function Page() {
                                             />
                                         </FormControl>
                                         <FormDescription>
-                                            Tell everyone about your newly planted tree!
+                                            Update everyone about your planted tree!
                                         </FormDescription>
                                         <FormMessage />
                                     </FormItem>
@@ -249,13 +259,13 @@ function Page() {
                         </div>
 
                         <div className="flex flex-col w-full">
-                            <Button type="submit">Submit new tree</Button>
+                            <Button type="submit">Update tree</Button>
                             <span className="w-full flex justify-center">or</span>
                             <Link
-                                href="/update"
+                                href="/upload"
                                 className={buttonVariants({ variant: "outline" })}
                             >
-                                Update your existing tree
+                                Upload your new tree
                             </Link>
                         </div>
                     </form>
