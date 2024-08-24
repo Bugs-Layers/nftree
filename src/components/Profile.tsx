@@ -1,6 +1,5 @@
-import Image from "next/image"
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar"
-import ProfilePageImages from "./profilepageimages"
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import ProfilePageImages from "./ProfilePageImages";
 
 type ProfileProps = {
   avatar:string;
