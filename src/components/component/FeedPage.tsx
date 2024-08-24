@@ -12,7 +12,7 @@ export function FeedPage() {
     <div className="flex flex-col min-h-screen">
       
       <main className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
-        <FeedCard description="This is a description" upvotes={10} image="https://source.unsplash.com/random" creation_date="2021-09-01" avatar="https://source.unsplash.com/random" username="john"/> 
+        <FeedCard description="This is a description" upvotes={10} image="/placeholder.svg" creation_date="2021-09-01" avatar="https://source.unsplash.com/random" username="john"/> 
           
       </main>
     </div>
