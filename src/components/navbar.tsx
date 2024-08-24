@@ -2,18 +2,19 @@ import { cn } from "~/lib/utils";
 import MaxWidthWrapper from "./max-width-wrapper";
 import { ThemeToggle } from "./theme-toggle";
 
+
 export default function Navbar({
   sticky = false
 }: {
   sticky?: boolean
 }) {
   return (
-    <nav className={cn("h-14 z-[100] w-full transition-all", {
+    <nav className={cn("h-14 z-[100] w-full transition-all bg-[#f5f5f5] dark:bg-black", {
       "sticky top-0": sticky,
     })}>
       <MaxWidthWrapper>
-        <div className="flex h-14 items-center justify-between">
-          <span className="">NAVBAR</span>
+        <div className="flex h-14 items-center justify-between bg-[#f5f5f5] dark:bg-black">
+          <span className=""></span>
           <ThemeToggle />
         </div>
       </MaxWidthWrapper>
