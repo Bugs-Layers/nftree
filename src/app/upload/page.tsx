@@ -124,9 +124,9 @@ function Page() {
                     </div>}
                 {/* Form */}
                 {/* <div>{capturedImage}</div> */}
-                {isCapturedImageInForm && (
+                {/* {isCapturedImageInForm && (
                     <div>image is accessed in form</div>
-                )}
+                )} */}
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(onSubmit)}
