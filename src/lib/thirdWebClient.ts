@@ -4,4 +4,4 @@ import { env } from '~/env';
 const clientId = env.NEXT_PUBLIC_THIRDWEB_CLIENT_ID;
 const secretKey = env.THIRDWEB_SECRET_KEY;
 
-export const client = createThirdwebClient(secretKey ? { secretKey } : { clientId }) 
+export const twClient = createThirdwebClient(secretKey ? { secretKey } : { clientId }) 

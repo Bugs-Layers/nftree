@@ -9,7 +9,7 @@ export default function Navbar({
   sticky?: boolean
 }) {
   return (
-    <nav className={cn("h-14 z-[100] w-full transition-all bg-[#f5f5f5] dark:bg-black", {
+    <nav className={cn("h-14 z-[10] w-full transition-all", {
       "sticky top-0": sticky,
     })}>
       <MaxWidthWrapper>
