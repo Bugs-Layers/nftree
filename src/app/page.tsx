@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FeedPage } from "~/components/component/FeedPage";
 import MaxWidthWrapper from "~/components/max-width-wrapper";
 import SignOutItem from "~/components/sign-out-item";
 import { buttonVariants } from "~/components/ui/button";
@@ -11,14 +12,7 @@ export default async function HomePage() {
     <main className="">
       <MaxWidthWrapper>
 
-        <span className="">{user ? "Signed in" : "Signed out"}</span>
-        {user ?
-          <SignOutItem />
-          :
-          <Link href="/sign-in" className={cn(buttonVariants({ variant: "link" }), "")}>
-            Sign In
-          </Link>
-        }
+       <div><FeedPage/></div>
       </MaxWidthWrapper>
     </main>
   );
