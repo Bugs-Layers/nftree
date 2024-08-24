@@ -5,10 +5,23 @@ import { Card,CardHeader, CardContent, CardFooter } from "~/components/ui/card"
 import { Button } from "~/components/ui/button"
 import { ArrowUpIcon } from "lucide-react"
 
+type FeedCardProps = {
+  avatar: string,
+  username: string
+  description: string,
+  image: string,
+  creation_date: string,
+  upvotes: number,
+}
 
 
-
-export function FeedCard() {
+export function FeedCard({
+  description,
+  upvotes,
+  image,
+  creation_date,
+  avatar,
+  username}:FeedCardProps) {
     return (
 
 <Card className="border-0 rounded-none shadow-none">
@@ -18,7 +31,7 @@ export function FeedCard() {
                   <AvatarImage src="/placeholder-user.jpg" alt="@shadcn" />
                   <AvatarFallback>AC</AvatarFallback>
                 </Avatar>
-                Acme Inc
+                {username}
               </Link>
             </CardHeader>
           <CardContent className="p-0">
@@ -26,12 +39,12 @@ export function FeedCard() {
           </CardContent>
           <CardFooter className="grid gap-2 p-2 pb-4">
             <div className="flex items-center w-full gap-2">
-              <Button variant="ghost" size="default">
-                <ArrowUpIcon className="w-4 h-4" />
-                <span className="sr-only">Upvote</span>
+              <Button variant="ghost" size="default"  title="Upvote">
+                <ArrowUpIcon className="w-4 h-4"/>
+      
               </Button>
               <div>
-                <span className="font-medium ">125 likes</span>
+                <span className="font-medium ">{upvotes} upvotes</span>
               </div>
             </div>
             <div className=" text-sm w-full grid gap-1.5">
