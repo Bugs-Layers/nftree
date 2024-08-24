@@ -1,3 +1,4 @@
+'use client';
 import MaxWidthWrapper from "./max-width-wrapper";
 import { House, Plus, UserRound } from "lucide-react";
 import Link from "next/link";
