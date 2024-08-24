@@ -32,7 +32,7 @@ import Camera from "~/components/ui/camera/camera";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "~/components/ui/dialog";
 import { UploadIcon, CameraIcon } from "lucide-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { createTree, getUserById } from "~/client/api";
+import { createTree, getUserById, uploadImage } from "~/client/api";
 import { useRouter } from "next/navigation";
 
 function Page() {
@@ -77,44 +77,38 @@ function Page() {
         getLocation();
     };
 
+    const { data: imageUrl, mutate: mutateImageUrl, isSuccess: uploadImageIsSuccess } = useMutation({
+        mutationFn: ({ image }: { image: Blob }) => {
+            return uploadImage(image)
+        }
+    })
+
     const treeMutation = useMutation({
-        mutationFn: ({ name, location, user_id, type, content }: { name: string, location: string, user_id: number, type: string, content: string }) => {
-            return createTree(name, location, user_id, type, content)
+        mutationFn: ({ name, location, user_id, type, content, imageFilename }: { name: string, location: string, user_id: number, type: string, content: string, imageFilename: string }) => {
+            return createTree(name, location, user_id, type, content, imageFilename)
         }
     })
 
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
         if (capturedImage) {
-            // const formData = new FormData();
-            // formData.append("picUrl", capturedImage);
-            // formData.append("description", data.description);
-            // formData.append("location", `${latitude}, ${longitude}`); // Using the captured location
+            const imageBlob = await (await fetch(capturedImage)).blob();
 
-            // // console.log(Array.from(formData));
+            mutateImageUrl({ image: imageBlob })
 
-            // // const createdRecordPosts = await pb.collection("posts").create(formData);
-
-            // const newFormData = new FormData();
-            // newFormData.append("pic", capturedImage);
-            // // newFormData.append("tree_id", createdRecordTrees.id);
-            // // newFormData.append("user_id", user.id);
-            // newFormData.append("upvotes", "0");
-            // setIsCapturedImageInForm(true);
-
-            // // TODO: redirect to individual tree page
-
-            treeMutation.mutate({
-                name: data.name,
-                location: `${data.latitude}:${data.longitude}`,
-                type: data.type,
-                user_id: 1,
-                content: data.description
-            }, {
-                onSuccess: () => {
-                    console.log("mutated")
-                    router.push("/home")
-                }
-            })
+            if (uploadImageIsSuccess)
+                treeMutation.mutate({
+                    name: data.name,
+                    location: `${data.latitude}:${data.longitude}`,
+                    type: data.type,
+                    user_id: 1,
+                    content: data.description,
+                    imageFilename: imageUrl.filename,
+                }, {
+                    onSuccess: () => {
+                        console.log("mutated")
+                        router.push("/home")
+                    }
+                })
 
         }
     };
