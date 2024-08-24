@@ -31,13 +31,16 @@ const formSchema = z.object({
 import Camera from "~/components/ui/camera/camera";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "~/components/ui/dialog";
 import { UploadIcon, CameraIcon } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { getUserById } from "~/client/api";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { createTree, getUserById } from "~/client/api";
+import { useRouter } from "next/navigation";
 
 function Page() {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
     });
+
+    const router = useRouter()
 
     const [isCaptureEnabled, setCaptureEnabled] = useState<boolean>(false);
     const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
@@ -51,9 +54,6 @@ function Page() {
 
     const [isCapturedImageInForm, setIsCapturedImageInForm] = useState<boolean>(false);
 
-    console.log(`lat:${latitude}, long: ${longitude}`);
-
-
     // Function to toggle camera facing mode
     const toggleCamera = () => {
         setFacingMode((prevMode) => (prevMode === "user" ? "environment" : "user"));
@@ -63,8 +63,6 @@ function Page() {
     const getLocation = () => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((position) => {
-                console.log("pos:", position);
-
                 setLatitude(position.coords.latitude.toString());
                 setLongitude(position.coords.longitude.toString());
             });
@@ -79,25 +77,45 @@ function Page() {
         getLocation();
     };
 
+    const treeMutation = useMutation({
+        mutationFn: ({ name, location, user_id, type, content }: { name: string, location: string, user_id: number, type: string, content: string }) => {
+            return createTree(name, location, user_id, type, content)
+        }
+    })
+
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
         if (capturedImage) {
-            const formData = new FormData();
-            formData.append("picUrl", capturedImage);
-            formData.append("description", data.description);
-            formData.append("location", `${latitude}, ${longitude}`); // Using the captured location
+            // const formData = new FormData();
+            // formData.append("picUrl", capturedImage);
+            // formData.append("description", data.description);
+            // formData.append("location", `${latitude}, ${longitude}`); // Using the captured location
 
-            // console.log(Array.from(formData));
+            // // console.log(Array.from(formData));
 
-            // const createdRecordPosts = await pb.collection("posts").create(formData);
+            // // const createdRecordPosts = await pb.collection("posts").create(formData);
 
-            const newFormData = new FormData();
-            newFormData.append("pic", capturedImage);
-            // newFormData.append("tree_id", createdRecordTrees.id);
-            // newFormData.append("user_id", user.id);
-            newFormData.append("upvotes", "0");
-            setIsCapturedImageInForm(true);
+            // const newFormData = new FormData();
+            // newFormData.append("pic", capturedImage);
+            // // newFormData.append("tree_id", createdRecordTrees.id);
+            // // newFormData.append("user_id", user.id);
+            // newFormData.append("upvotes", "0");
+            // setIsCapturedImageInForm(true);
 
-            // TODO: redirect to individual tree page
+            // // TODO: redirect to individual tree page
+
+            treeMutation.mutate({
+                name: data.name,
+                location: `${data.latitude}:${data.longitude}`,
+                type: data.type,
+                user_id: 1,
+                content: data.description
+            }, {
+                onSuccess: () => {
+                    console.log("mutated")
+                    router.push("/home")
+                }
+            })
+
         }
     };
 
