@@ -22,6 +22,7 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@t3-oss/env-nextjs": "^0.11.0",
     "@tanstack/react-query": "^5.49.0",
+    "@types/eslint": "^9.6.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "embla-carousel-react": "^8.1.5",
@@ -53,5 +54,8 @@
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
+  },
+  "resolutions": {
+    "terser": "3.14.1"
   }
 }
