@@ -40,6 +40,9 @@ import { createPost, createTree, getUserById, getUserByWalletAddress, getUserTre
 import { useRouter } from "next/navigation";
 import { log } from "console";
 import { useActiveAccount } from "thirdweb/react";
+import { sendAndConfirmTransaction } from "thirdweb";
+import { verifyDaily } from "~/lib/thirdweb/rpc/43113/0xdcee2dd10dd46086cc1d2b0825a11ffc990e6eff";
+import { nftreeContract } from "~/lib/thirdweb/web3";
 
 function Page() {
     const form = useForm<z.infer<typeof formSchema>>({
@@ -113,8 +116,18 @@ function Page() {
 
     const treeUpdateMutation = useMutation({
         mutationFn: async ({ tree_id, user_id, content, image }: { tree_id: number, user_id: number, content: string, image: Blob }) => {
+            if (!activeAccount) throw new Error("No active account")
+
             const imageUrlObj = await uploadImage(image)
             await createPost(content, user_id, tree_id, imageUrlObj.filename)
+
+            const reciept = await sendAndConfirmTransaction({
+                transaction: verifyDaily({
+                    tokenId: BigInt(tree_id),
+                    contract: nftreeContract,
+                }),
+                account: activeAccount,
+            });
         }
     })
 
