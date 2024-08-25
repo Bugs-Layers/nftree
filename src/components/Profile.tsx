@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import ProfilePageImages from "./ProfilePageImages";
-import { BASE_URL, getUserByWalletAddress, getUserPosts } from "~/client/api";
+import { BASE_URL, getUserByWalletAddress, getUserPosts, UserResponseType } from "~/client/api";
 import { getWalletAddressCookie } from "~/lib/thirdweb/actions";
 import { redirect } from "next/navigation";
 import { showBalance } from "~/lib/thirdweb/web3";
@@ -24,8 +24,13 @@ export default async function Profile({
   const wallet = (await getWalletAddressCookie())?.value
   if (!wallet) redirect("/login")
 
+  let user: UserResponseType;
+  try {
+    user = await getUserByWalletAddress(wallet)
+  } catch (e) {
+    return <>No users in the db!</>
+  }
 
-  const user = await getUserByWalletAddress(wallet)
   const posts = await getUserPosts(user.id)
 
   return (
@@ -42,9 +47,9 @@ export default async function Profile({
             </div>
           </div>
           <div className="text-center md:text-left">
-            <h2 className="text-2xl font-bold">{username}</h2>
+            <h2 className="text-2xl font-bold">{user.name}</h2>
             <p className="text-sm text-muted-foreground">
-              {description}
+              {user.bio}
             </p>
             <Web3Stats wallet={wallet} />
             {/* <div className="flex items-center justify-center gap-4 mt-4 md:justify-start">
