@@ -3,6 +3,8 @@ import ProfilePageImages from "./ProfilePageImages";
 import { BASE_URL, getUserByWalletAddress, getUserPosts } from "~/client/api";
 import { getWalletAddressCookie } from "~/lib/thirdweb/actions";
 import { redirect } from "next/navigation";
+import { showBalance } from "~/lib/thirdweb/web3";
+import Web3Stats from "./web3-stats";
 
 type ProfileProps = {
   avatar: string;
@@ -21,6 +23,7 @@ export default async function Profile({
 }: ProfileProps) {
   const wallet = (await getWalletAddressCookie())?.value
   if (!wallet) redirect("/login")
+
 
   const user = await getUserByWalletAddress(wallet)
   const posts = await getUserPosts(user.id)
@@ -43,17 +46,19 @@ export default async function Profile({
             <p className="text-sm text-muted-foreground">
               {description}
             </p>
-            <div className="flex items-center justify-center gap-4 mt-4 md:justify-start">
+            <Web3Stats wallet={wallet} />
+            {/* <div className="flex items-center justify-center gap-4 mt-4 md:justify-start">
               <div className="flex flex-col items-center">
                 <span className="font-bold">{trees}</span>
                 <span className="text-sm text-muted-foreground">Trees</span>
               </div>
 
               <div className="flex flex-col items-center">
-                <span className="font-bold">{carboncredits}</span>
+
+                <span className="font-bold">{carbonCredits}</span>
                 <span className="text-sm text-muted-foreground">Carbon Credits</span>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
@@ -62,7 +67,7 @@ export default async function Profile({
           const [image, ...desc] = post.content.split(" ")
 
           return (
-            <ProfilePageImages image={image ? `${BASE_URL}${image.split("=")[1]}` : "/placeholder.svg"} />
+            <ProfilePageImages key={post.id} image={image ? `${BASE_URL}${image.split("=")[1]}` : "/placeholder.svg"} />
           )
         })}
       </div>
