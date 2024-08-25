@@ -36,6 +36,9 @@ import { createTree, getUserById, getUserByWalletAddress, uploadImage } from "~/
 import { useRouter } from "next/navigation";
 import { log } from "console";
 import { useActiveAccount, useActiveWallet } from "thirdweb/react";
+import { sendAndConfirmTransaction } from "thirdweb";
+import { safeMint } from "~/lib/thirdweb/rpc/43113/0xdcee2dd10dd46086cc1d2b0825a11ffc990e6eff";
+import { nftreeContract } from "~/lib/thirdweb/web3";
 
 function Page() {
     const form = useForm<z.infer<typeof formSchema>>({
@@ -92,8 +95,21 @@ function Page() {
 
     const treeMutation = useMutation({
         mutationFn: async ({ name, location, user_id, type, content, image }: { name: string, location: string, user_id: number, type: string, content: string, image: Blob }) => {
+            if (!activeAccount) throw new Error("No active account")
+
             const imageUrlObj = await uploadImage(image)
-            await createTree(name, location, user_id, type, content, imageUrlObj.filename)
+            const res = await createTree(name, location, user_id, type, content, imageUrlObj.filename)
+
+            if (!res.tree_id) throw new Error("No tree created in db")
+
+            const reciept = await sendAndConfirmTransaction({
+                transaction: safeMint({
+                    to: activeAccount.address,
+                    uri: `${process.env.NEXT_PUBLIC_BASE_URL}/trees/${res.tree_id}`,
+                    contract: nftreeContract,
+                }),
+                account: activeAccount!,
+            });
         }
     })
 
@@ -109,7 +125,7 @@ function Page() {
     const { data: user } = useUserByWallet(activeAccount ? activeAccount.address : "")
 
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
-        if (!user) {
+        if (!user || !activeAccount) {
             router.push("/login")
             return;
         }
