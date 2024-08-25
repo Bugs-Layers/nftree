@@ -19,6 +19,7 @@ export async function FeedPage() {
               image={image ? `${BASE_URL}${image.split("=")[1]}` : "/placeholder.svg"}
               creation_date={post.created_at}
               avatar="/placeholder-user.jpg"
+              treeId={post.tree_id}
               username={post.username || ""} />
           )
 

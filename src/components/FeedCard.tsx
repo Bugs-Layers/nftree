@@ -5,9 +5,11 @@ import { Card, CardHeader, CardContent, CardFooter } from "~/components/ui/card"
 import { Button } from "~/components/ui/button"
 import { ArrowUpIcon } from "lucide-react"
 import Image from 'next/image'
+import UpvoteButton from "./upvote-button"
 
 type FeedCardProps = {
   avatar: string,
+  treeId: number,
   username: string
   description: string,
   image: string,
@@ -19,6 +21,7 @@ type FeedCardProps = {
 export function FeedCard({
   description,
   upvotes,
+  treeId,
   image,
   creation_date,
   avatar,
@@ -40,15 +43,7 @@ export function FeedCard({
         <Image src={image} width={400} height={400} alt="Image" className="object-cover aspect-square" />
       </CardContent>
       <CardFooter className="grid gap-2 p-2 pb-4">
-        <div className="flex items-center w-full gap-2">
-          <Button variant="ghost" size="default" title="Upvote">
-            <ArrowUpIcon className="w-4 h-4" />
-
-          </Button>
-          <div>
-            <span className="font-medium ">{upvotes} upvotes</span>
-          </div>
-        </div>
+        <UpvoteButton treeId={treeId} />
         <div className=" text-sm w-full grid gap-1.5">
           <div className=" flex gap-2">
             <Link href="#" className="font-medium" prefetch={false}>
