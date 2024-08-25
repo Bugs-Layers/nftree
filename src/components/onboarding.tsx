@@ -8,17 +8,13 @@ async function Onboarding({ walletAddress }: { walletAddress: string }) {
   const userPresentInDb = async () => {
     try {
       return await getUserByWalletAddress(walletAddress)
-      // if (userPresentInDb) redirect("/")
     } catch (e) {
       console.error(e)
     }
   }
 
-  if (await userPresentInDb()) {
-    redirect("/")
-  }
-  else
-    return <OnboardingForm walletAddress={walletAddress} />
+  if (await userPresentInDb()) redirect("/")
+  else return <OnboardingForm walletAddress={walletAddress} />
 }
 
 export default Onboarding;
