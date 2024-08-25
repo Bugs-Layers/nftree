@@ -32,7 +32,7 @@ import Camera from "~/components/ui/camera/camera";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "~/components/ui/dialog";
 import { UploadIcon, CameraIcon } from "lucide-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { createTree, getUserById, getUserByWalletAddress, uploadImage } from "~/client/api";
+import { createTree, getLastTreeId, getUserById, getUserByWalletAddress, uploadImage } from "~/client/api";
 import { useRouter } from "next/navigation";
 import { log } from "console";
 import { useActiveAccount, useActiveWallet } from "thirdweb/react";
@@ -97,19 +97,21 @@ function Page() {
         mutationFn: async ({ name, location, user_id, type, content, image }: { name: string, location: string, user_id: number, type: string, content: string, image: Blob }) => {
             if (!activeAccount) throw new Error("No active account")
 
-            const imageUrlObj = await uploadImage(image)
-            const res = await createTree(name, location, user_id, type, content, imageUrlObj.filename)
-
-            if (!res.tree_id) throw new Error("No tree created in db")
+            const lastTreeId = await getLastTreeId();
 
             const reciept = await sendAndConfirmTransaction({
                 transaction: safeMint({
                     to: activeAccount.address,
-                    uri: `${process.env.NEXT_PUBLIC_BASE_URL}/trees/${res.tree_id}`,
+                    uri: `${process.env.NEXT_PUBLIC_BASE_URL}/trees/${lastTreeId + 1}`,
                     contract: nftreeContract,
                 }),
                 account: activeAccount!,
             });
+
+            const imageUrlObj = await uploadImage(image)
+            const res = await createTree(lastTreeId + 1, name, location, user_id, type, content, imageUrlObj.filename)
+
+            if (!res.tree_id) throw new Error("No tree created in db")
         }
     })
 

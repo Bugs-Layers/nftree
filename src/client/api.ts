@@ -107,6 +107,13 @@ export const getUserPosts = async (id: number): Promise<PostResponseType[]> => {
 
 }
 
+export const getLastTreeId = async (): Promise<number> => {
+  const res = await fetch(`${BASE_URL}/tree/get_last_id`)
+  const data = await res.text()
+  if (!res.ok) throw new Error(data)
+  return parseInt(data)
+}
+
 
 export const createUser = async (name: string, bio: string, wallet: string) => {
   const res = await fetch(`${BASE_URL}/user`, {
@@ -154,7 +161,7 @@ export const createPost = async (content: string, user_id: number, tree_id: numb
 }
 
 
-export const createTree = async (name: string, location: string, user_id: number, type: string, content: string, imageFilename: string): Promise<{
+export const createTree = async (tree_id: number | undefined, name: string, location: string, user_id: number, type: string, content: string, imageFilename: string): Promise<{
   message: string,
   tree_id: number | undefined
 }> => {
@@ -164,7 +171,13 @@ export const createTree = async (name: string, location: string, user_id: number
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      tree: {
+      tree: tree_id ? {
+        tree_id,
+        name,
+        location,
+        user_id,
+        type,
+      } : {
         name,
         location,
         user_id,

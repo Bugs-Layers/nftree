@@ -36,7 +36,7 @@ import Camera from "~/components/ui/camera/camera";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "~/components/ui/dialog";
 import { UploadIcon, CameraIcon } from "lucide-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { createPost, createTree, getUserById, getUserByWalletAddress, getUserTrees, uploadImage } from "~/client/api";
+import { createPost, createTree, getLastTreeId, getUserById, getUserByWalletAddress, getUserTrees, uploadImage } from "~/client/api";
 import { useRouter } from "next/navigation";
 import { log } from "console";
 import { useActiveAccount } from "thirdweb/react";
@@ -118,9 +118,6 @@ function Page() {
         mutationFn: async ({ tree_id, user_id, content, image }: { tree_id: number, user_id: number, content: string, image: Blob }) => {
             if (!activeAccount) throw new Error("No active account")
 
-            const imageUrlObj = await uploadImage(image)
-            await createPost(content, user_id, tree_id, imageUrlObj.filename)
-
             const reciept = await sendAndConfirmTransaction({
                 transaction: verifyDaily({
                     tokenId: BigInt(tree_id),
@@ -128,6 +125,9 @@ function Page() {
                 }),
                 account: activeAccount,
             });
+
+            const imageUrlObj = await uploadImage(image)
+            await createPost(content, user_id, tree_id, imageUrlObj.filename)
         }
     })
 
