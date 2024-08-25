@@ -32,9 +32,10 @@ import Camera from "~/components/ui/camera/camera";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "~/components/ui/dialog";
 import { UploadIcon, CameraIcon } from "lucide-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { createTree, getUserById, uploadImage } from "~/client/api";
+import { createTree, getUserById, getUserByWalletAddress, uploadImage } from "~/client/api";
 import { useRouter } from "next/navigation";
 import { log } from "console";
+import { useActiveAccount, useActiveWallet } from "thirdweb/react";
 
 function Page() {
     const form = useForm<z.infer<typeof formSchema>>({
@@ -42,6 +43,8 @@ function Page() {
     });
 
     const router = useRouter()
+
+    const activeAccount = useActiveAccount()
 
     const [isCaptureEnabled, setCaptureEnabled] = useState<boolean>(false);
     const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
@@ -94,7 +97,23 @@ function Page() {
         }
     })
 
+    const useUserByWallet = (wallet: string) => useQuery({
+        queryKey: ["wallet", wallet],
+        queryFn: async () => {
+            if (!activeAccount) router.push("/login")
+            return await getUserByWalletAddress(wallet)
+        }
+    })
+
+
+    const { data: user } = useUserByWallet(activeAccount ? activeAccount.address : "")
+
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
+        if (!user) {
+            router.push("/login")
+            return;
+        }
+
         if (capturedImage) {
             const imageBlob = await (await fetch(capturedImage)).blob();
 
@@ -104,7 +123,7 @@ function Page() {
                 name: data.name,
                 location: `${data.latitude}:${data.longitude}`,
                 type: data.type,
-                user_id: 1,
+                user_id: user.id,
                 content: data.description,
                 image: imageBlob
             }, {

@@ -1,10 +1,25 @@
 "use client";
 
-import { ConnectButton } from "thirdweb/react";
+import { ConnectButton, useAutoConnect } from "thirdweb/react";
+import { createWallet, inAppWallet, Wallet } from "thirdweb/wallets";
 import { generatePayload, isLoggedIn, login, logout, setWalletAddressCookie } from "~/lib/thirdweb/actions";
 import { client } from "~/lib/thirdweb/client";
 
+let wallet: Wallet
+
 export default function LoginButton() {
+  const { data: autoConnected, isLoading } = useAutoConnect({
+    client: client,
+    onConnect: (w: Wallet) => {
+      wallet = w;
+    },
+    wallets: [
+      inAppWallet(),
+      createWallet("app.core"),
+      createWallet("io.metamask"),
+    ],
+  });
+
   return (
     <ConnectButton
       client={client}

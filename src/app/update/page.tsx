@@ -28,22 +28,20 @@ import { z } from "zod";
 import { CameraProvider } from "~/components/ui/camera/camera-provider";
 
 const formSchema = z.object({
-    description: z.string().min(1).max(100),
-    type: z.string(),
-    name: z.string(),
-    latitude: z.string().optional(),
-    longitude: z.string().optional(),
+    description: z.string(),
+    tree_id: z.string(),
 });
 
 import Camera from "~/components/ui/camera/camera";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "~/components/ui/dialog";
 import { UploadIcon, CameraIcon } from "lucide-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { createTree, getUserById, uploadImage } from "~/client/api";
+import { createPost, createTree, getUserById, getUserByWalletAddress, getUserTrees, uploadImage } from "~/client/api";
 import { useRouter } from "next/navigation";
 import { log } from "console";
+import { useActiveAccount } from "thirdweb/react";
 
-const Page = () => {
+function Page() {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
     });
@@ -94,32 +92,70 @@ const Page = () => {
     //     }
     // })
 
-    const treeMutation = useMutation({
-        mutationFn: async ({ name, location, user_id, type, content, image }: { name: string, location: string, user_id: number, type: string, content: string, image: Blob }) => {
+    const useUserQuery = (wallet: string) => useQuery({
+        queryKey: ["wallet", wallet],
+        queryFn: async () => await getUserByWalletAddress(wallet)
+    })
+
+    const useUserTreesQuery = (wallet: string) => useQuery({
+        queryKey: ["usertrees", wallet],
+        queryFn: async () => {
+            const user = await getUserByWalletAddress(wallet)
+            const trees = await getUserTrees(user.id)
+            return trees
+        }
+    })
+
+    const activeAccount = useActiveAccount()
+
+    const { data: trees } = useUserTreesQuery(activeAccount ? activeAccount.address : "")
+    const { data: user } = useUserQuery(activeAccount ? activeAccount.address : "")
+
+    const treeUpdateMutation = useMutation({
+        mutationFn: async ({ tree_id, user_id, content, image }: { tree_id: number, user_id: number, content: string, image: Blob }) => {
             const imageUrlObj = await uploadImage(image)
-            await createTree(name, location, user_id, type, content, imageUrlObj.filename)
+            await createPost(content, user_id, tree_id, imageUrlObj.filename)
         }
     })
 
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
+        if (!user) {
+            router.push("/login")
+            return
+        }
+
         if (capturedImage) {
             const imageBlob = await (await fetch(capturedImage)).blob();
 
-            // mutateImageUrl({ image: imageBlob })
+            console.log(data, imageBlob)
 
-            treeMutation.mutate({
-                name: data.name,
-                location: `${data.latitude}:${data.longitude}`,
-                type: 'treeType',
-                user_id: 1,
+            treeUpdateMutation.mutate({
+                tree_id: parseInt(data.tree_id),
+                user_id: user?.id,
                 content: data.description,
                 image: imageBlob
             }, {
                 onSuccess: () => {
-                    console.log("Updated")
+                    console.log("mutated")
                     router.push("/home")
                 }
             })
+
+            // mutateImageUrl({ image: imageBlob })
+
+            // treeMutation.mutate({
+            //     name: data.name,
+            //     location: `${data.latitude}:${data.longitude}`,
+            //     type: 'treeType',
+            //     user_id: 1,
+            //     content: data.description,
+            //     image: imageBlob
+            // }, {
+            //     onSuccess: () => {
+            //         console.log("Updated")
+            //         router.push("/home")
+            //     }
+            // })
 
         }
     };
@@ -154,7 +190,7 @@ const Page = () => {
 
                 <Form {...form}>
                     <form
-                        onSubmit={form.handleSubmit(onSubmit)}
+                        onSubmit={form.handleSubmit(onSubmit, (e) => console.log(e))}
                         className={`w-full p-10 flex flex-col gap-10`}
                     >
                         <div className={`flex flex-col gap-5 w-full ${capturedImage ? '' : 'my-8'}`}>
@@ -201,21 +237,22 @@ const Page = () => {
                             {/* Form Fields */}
                             <FormField
                                 control={form.control}
-                                name="name"
+                                name="tree_id"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <Select onValueChange={field.onChange}>
                                             <FormControl>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Select your tree" />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                <SelectItem value="m@example.com">m@example.com</SelectItem>
-                                                <SelectItem value="m@google.com">m@google.com</SelectItem>
-                                                <SelectItem value="m@support.com">m@support.com</SelectItem>
+                                                {trees?.map(tree => (
+                                                    <SelectItem key={tree.id} value={tree.id.toString()}>{tree.name}</SelectItem>
+                                                ))}
                                             </SelectContent>
                                         </Select>
+                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />

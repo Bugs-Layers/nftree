@@ -1,21 +1,30 @@
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import ProfilePageImages from "./ProfilePageImages";
+import { BASE_URL, getUserByWalletAddress, getUserPosts } from "~/client/api";
+import { getWalletAddressCookie } from "~/lib/thirdweb/actions";
+import { redirect } from "next/navigation";
 
 type ProfileProps = {
-  avatar:string;
-  username:string;
-  description:string;
-  trees:number;
-  carboncredits:number;
+  avatar: string;
+  username: string;
+  description: string;
+  trees: number;
+  carboncredits: number;
 }
 
-export default function Profile({
+export default async function Profile({
   avatar,
   username,
   description,
   trees,
   carboncredits,
-}:ProfileProps) {
+}: ProfileProps) {
+  const wallet = (await getWalletAddressCookie())?.value
+  if (!wallet) redirect("/login")
+
+  const user = await getUserByWalletAddress(wallet)
+  const posts = await getUserPosts(user.id)
+
   return (
     <div className="flex flex-col w-full">
       <div className="bg-[#f5f5f5] dark:bg-black py-8 px-4 md:px-6 lg:px-8">
@@ -39,7 +48,7 @@ export default function Profile({
                 <span className="font-bold">{trees}</span>
                 <span className="text-sm text-muted-foreground">Trees</span>
               </div>
-              
+
               <div className="flex flex-col items-center">
                 <span className="font-bold">{carboncredits}</span>
                 <span className="text-sm text-muted-foreground">Carbon Credits</span>
@@ -49,7 +58,13 @@ export default function Profile({
         </div>
       </div>
       <div>
-        <ProfilePageImages image={"/placeholder.svg"}/>
+        {posts.map((post) => {
+          const [image, ...desc] = post.content.split(" ")
+
+          return (
+            <ProfilePageImages image={image ? `${BASE_URL}${image.split("=")[1]}` : "/placeholder.svg"} />
+          )
+        })}
       </div>
       <br></br>
     </div>
@@ -57,7 +72,7 @@ export default function Profile({
 }
 
 
-function CameraIcon(props:any) {
+function CameraIcon(props: any) {
   return (
     <svg
       {...props}

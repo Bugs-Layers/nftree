@@ -1,18 +1,34 @@
+import { BASE_URL, getAllPosts } from "~/client/api"
 import { FeedCard } from "../FeedCard"
 
-export function FeedPage() {
+export async function FeedPage() {
+  const posts = await getAllPosts()
+
   return (
     <div className="flex flex-col min-h-screen">
-      
+
       <main className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
-        <FeedCard description="This is a description" upvotes={10} image="/placeholder.svg" creation_date="2021-09-01" avatar="/placeholder-user.jpg" username="john"/> 
-          
+        {posts.map((post) => {
+          const [image, ...desc] = post.content.split(" ")
+
+          return (
+            <FeedCard
+              key={post.id}
+              description={desc.join(" ")}
+              upvotes={10}
+              image={image ? `${BASE_URL}${image.split("=")[1]}` : "/placeholder.svg"}
+              creation_date={post.created_at}
+              avatar="/placeholder-user.jpg"
+              username={post.username || ""} />
+          )
+
+        })}
       </main>
     </div>
   )
 }
 
-function BookmarkIcon(props:any) {
+function BookmarkIcon(props: any) {
   return (
     <svg
       {...props}
@@ -32,7 +48,7 @@ function BookmarkIcon(props:any) {
 }
 
 
-function HeartIcon(props:any) {
+function HeartIcon(props: any) {
   return (
     <svg
       {...props}
@@ -52,7 +68,7 @@ function HeartIcon(props:any) {
 }
 
 
-function HomeIcon(props:any) {
+function HomeIcon(props: any) {
   return (
     <svg
       {...props}
@@ -73,7 +89,7 @@ function HomeIcon(props:any) {
 }
 
 
-function InstagramIcon(props:any) {
+function InstagramIcon(props: any) {
   return (
     <svg
       {...props}
@@ -95,7 +111,7 @@ function InstagramIcon(props:any) {
 }
 
 
-function MessageCircleIcon(props:any) {
+function MessageCircleIcon(props: any) {
   return (
     <svg
       {...props}
@@ -115,7 +131,7 @@ function MessageCircleIcon(props:any) {
 }
 
 
-function PlusIcon(props:any) {
+function PlusIcon(props: any) {
   return (
     <svg
       {...props}
@@ -136,7 +152,7 @@ function PlusIcon(props:any) {
 }
 
 
-function SearchIcon(props:any) {
+function SearchIcon(props: any) {
   return (
     <svg
       {...props}
@@ -157,7 +173,7 @@ function SearchIcon(props:any) {
 }
 
 
-function SendIcon(props:any) {
+function SendIcon(props: any) {
   return (
     <svg
       {...props}
