@@ -48,9 +48,24 @@ export const getUserById = async (id: number): Promise<UserResponseType> => {
   return user
 }
 
+export const getUserByWalletAddress = async (addr: string): Promise<UserResponseType> => {
+  const res = await fetch(`${BASE_URL}/user/wallet/${addr}`)
+  const data = await res.json()
+  if (!res.ok) {
+    throw new Error(data)
+  }
+
+  UserResponse.parse(data);
+
+  return data
+}
+
 export const createUser = async (name: string, bio: string, wallet: string) => {
   const res = await fetch(`${BASE_URL}/user`, {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify({ name, bio, wallet })
   })
   if (!res.ok) {

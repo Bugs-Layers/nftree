@@ -2,6 +2,7 @@ import { cn } from "~/lib/utils";
 import MaxWidthWrapper from "./max-width-wrapper";
 import { ThemeToggle } from "./theme-toggle";
 import Image from 'next/image';
+import LoginButton from "./login-button";
 
 
 export default function Navbar({
@@ -15,10 +16,13 @@ export default function Navbar({
     })}>
       <MaxWidthWrapper>
         <div className="flex h-full items-center justify-between bg-[#f5f5f5] dark:bg-black">
-          <span><nav className="flex items-center gap-4 ">
-            <div className="dark:hidden">
-          <Image src="/logo.png" alt="logo" width={40} height={40} /></div>
-        </nav></span>
+          <span>
+            <div className="flex items-center gap-4 ">
+              <div className="dark:hidden">
+                <Image src="/logo.png" alt="logo" width={40} height={40} /></div>
+            </div>
+          </span>
+          <LoginButton />
           <ThemeToggle />
         </div>
       </MaxWidthWrapper>
